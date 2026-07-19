@@ -29,7 +29,7 @@ local Tab = Window:Tab({Text = "Main"})
 
 -- // Sektionen
 local AutoSection = Tab:Section({Text = "Automation"})
-local EggSection = Tab:Section({Text = "Egg Hatching"})
+local EggSection = Tab:Section({Text = "Exclusive Eggs"})
 local AdminStuffSection = Tab:Section({Text = "Admin Abuse", Side = "Right"})
 local JuiceUtilSection = Tab:Section({Text = "Juice, Crafting & Items", Side = "Right"})
 local UtilSection = Tab:Section({Text = "Utility", Side = "Right"})
@@ -47,8 +47,8 @@ EggSection:Toggle({Text = "Auto Open 20x Selected", Callback = function(s) getge
 
 -- // Admin Stuff (Rechts)
 AdminStuffSection:Toggle({Text = "Auto PickUp & Feed", Callback = function(s) getgenv().AutoAdmin = s if s then task.spawn(function() while getgenv().AutoAdmin do for _, food in ipairs(AdminFoods) do if not getgenv().AutoAdmin then break end pcall(function() AdminPickUp:FireServer(food) end) task.wait(0.1) pcall(function() AdminFeed:FireServer() end) task.wait(0.2) end task.wait(0.5) end end) end end})
-AdminStuffSection:Toggle({Text = "Auto Click Admin Chest", Callback = function(s) getgenv().AutoChest = s if s then task.spawn(function() while getgenv().AutoChest do pcall(function() AdminChestUpdate:FireServer() end) task.wait(0.2) end end) end end})
-AdminStuffSection:Toggle({Text = "Auto Open Admin Chest", Callback = function(s) getgenv().AutoOpenChest = s if s then task.spawn(function() while getgenv().AutoOpenChest do pcall(function() AdminChestClaim:FireServer() end) task.wait(0.2) end end) end end})
+AdminStuffSection:Toggle({Text = "Auto Hit Admin Chest", Callback = function(s) getgenv().AutoChest = s if s then task.spawn(function() while getgenv().AutoChest do pcall(function() AdminChestUpdate:FireServer() end) task.wait(0.2) end end) end end})
+AdminStuffSection:Toggle({Text = "Auto Open Key Chest", Callback = function(s) getgenv().AutoOpenChest = s if s then task.spawn(function() while getgenv().AutoOpenChest do pcall(function() AdminChestClaim:FireServer() end) task.wait(0.2) end end) end end})
 
 -- // Juice, Crafting & Items (Rechts)
 local selectedJuice = Items[1]
