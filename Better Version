@@ -1,0 +1,63 @@
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Rain-Design/Libraries/main/Shaman/Library.lua'))()
+
+-- // Services & Events
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Knit = ReplicatedStorage:WaitForChild("Library"):WaitForChild("Knit")
+local BuyEvent = Knit.Services.ItemsService.RE.Buy
+local TrainEvent = Knit.Services.TrainingService.RE.Train
+local ClaimEvent = Knit.Services.CodesService.RF.Claim
+local TradeEvent = Knit.Services.TradeService.RE.TradeAdd
+local UseEvent = Knit.Services.InventoryService.RE.Use
+local CraftEvent = Knit.Services.JuiceMachineService.RE.Craft
+local ThrowService = Knit.Services.ThrowService
+local AdminPickUp = Knit.Services.AdminPanelService.RE.AdminFeedPickUp
+local AdminFeed = Knit.Services.AdminPanelService.RE.AdminFeedFeed
+local AdminChestUpdate = Knit.Services.AdminPanelService.RE.AdminChestUpdate
+local AdminChestClaim = Knit.Services.AdminChestService.RE.Claim
+local SeasonPassClaim = Knit.Services.SeasonpassService.RE.Claim
+
+-- // Listen
+local Balls = {"Green Ball", "Blue Ball", "Orange Ball", "Purple Ball", "Yellow Ball", "Red Ball", "Champions Ball", "Golden Ball", "Void Champions Ball", "Rainbow Ball"}
+local Eggs = {"Timeless Egg", "Void Egg", "Blaster Egg", "World Cup Season Egg"}
+local Codes = {"charmroot", "applepower", "coinbanana", "mixpotion", "darkegg", "darkduo", "ancient", "eraeggs", "riftage", "grateful", "crownpotion"}
+local Items = {"Royal Potion", "Cocktail Potion", "Cash Potion", "Luck Potion", "Power Potion", "Banana Fruit", "Carrot Fruit", "Apple Fruit", "Orange Fruit", "Blueberry Fruit", "Golden Banana Fruit"}
+local AdminFoods = {"Pumpkin", "Tomato", "Apple", "Broccoli", "Hot Dog", "Banana", "Pizza", "Carrot", "Donut", "Cookie", "Lollipop", "Burger", "Turkey"}
+
+-- // GUI Setup
+local Window = Library:Window({Text = "Football Training"})
+local Tab = Window:Tab({Text = "Main"})
+
+-- // Sektionen
+local AutoSection = Tab:Section({Text = "Automation"})
+local EggSection = Tab:Section({Text = "Egg Hatching"})
+local AdminStuffSection = Tab:Section({Text = "Admin Abuse", Side = "Right"})
+local JuiceUtilSection = Tab:Section({Text = "Juice, Crafting & Items", Side = "Right"})
+local UtilSection = Tab:Section({Text = "Utility", Side = "Right"})
+
+-- // Automation (Links)
+AutoSection:Toggle({Text = "Auto Buy Balls", Callback = function(s) getgenv().AutoBuyBalls = s if s then task.spawn(function() while getgenv().AutoBuyBalls do for _,b in ipairs(Balls) do if not getgenv().AutoBuyBalls then break end pcall(function() BuyEvent:FireServer(b) end) task.wait(0.4) end task.wait(0.5) end end) end end})
+AutoSection:Toggle({Text = "Auto Train", Callback = function(s) getgenv().AutoTrain = s if s then task.spawn(function() while getgenv().AutoTrain do pcall(function() TrainEvent:FireServer() end) task.wait(0.05) end end) end end})
+AutoSection:Toggle({Text = "Auto Throw", Callback = function(s) getgenv().AutoThrow = s if s then task.spawn(function() while getgenv().AutoThrow do pcall(function() ThrowService.RE.Throw:FireServer() task.wait(0.1) ThrowService.RE.Finish:FireServer() end) task.wait(0.1) end end) end end})
+AutoSection:Toggle({Text = "Auto Claim Season Pass", Callback = function(s) getgenv().AutoClaimSeasonPass = s if s then task.spawn(function() while getgenv().AutoClaimSeasonPass do for i = 1, 15 do if not getgenv().AutoClaimSeasonPass then break end pcall(function() SeasonPassClaim:FireServer("Premium", i) SeasonPassClaim:FireServer("Free", i) end) task.wait(0.1) end task.wait(5) end end) end end})
+
+-- // Egg (Links)
+local selectedEgg = Eggs[1]
+EggSection:Dropdown({Text = "Select Egg", List = Eggs, Callback = function(v) selectedEgg = v end})
+EggSection:Toggle({Text = "Auto Open 20x Selected", Callback = function(s) getgenv().AutoOpenEggs = s if s then task.spawn(function() while getgenv().AutoOpenEggs do for i=1,20 do if not getgenv().AutoOpenEggs then break end pcall(function() UseEvent:FireServer(selectedEgg) end) end task.wait(1) end end) end end})
+
+-- // Admin Stuff (Rechts)
+AdminStuffSection:Toggle({Text = "Auto PickUp & Feed", Callback = function(s) getgenv().AutoAdmin = s if s then task.spawn(function() while getgenv().AutoAdmin do for _, food in ipairs(AdminFoods) do if not getgenv().AutoAdmin then break end pcall(function() AdminPickUp:FireServer(food) end) task.wait(0.1) pcall(function() AdminFeed:FireServer() end) task.wait(0.2) end task.wait(0.5) end end) end end})
+AdminStuffSection:Toggle({Text = "Auto Click Admin Chest", Callback = function(s) getgenv().AutoChest = s if s then task.spawn(function() while getgenv().AutoChest do pcall(function() AdminChestUpdate:FireServer() end) task.wait(0.2) end end) end end})
+AdminStuffSection:Toggle({Text = "Auto Open Admin Chest", Callback = function(s) getgenv().AutoOpenChest = s if s then task.spawn(function() while getgenv().AutoOpenChest do pcall(function() AdminChestClaim:FireServer() end) task.wait(0.2) end end) end end})
+
+-- // Juice, Crafting & Items (Rechts)
+local selectedJuice = Items[1]
+JuiceUtilSection:Dropdown({Text = "Select Potion/Fruit", List = Items, Callback = function(v) selectedJuice = v end})
+JuiceUtilSection:Button({Text = "Craft 10x Selected", Callback = function() for i=1,10 do pcall(function() CraftEvent:FireServer(selectedJuice) end) task.wait(0.1) end end})
+JuiceUtilSection:Button({Text = "Use 12x Selected", Callback = function() for i=1,12 do pcall(function() UseEvent:FireServer(selectedJuice) end) task.wait(0.1) end end})
+
+-- // Utility (Rechts)
+UtilSection:Button({Text = "Use All Codes", Callback = function() for _,c in ipairs(Codes) do pcall(function() ClaimEvent:InvokeServer(c) end) task.wait(0.3) end end})
+UtilSection:Button({Text = "Add All Items (10x)", Callback = function() for _,item in ipairs(Items) do for i=1,10 do pcall(function() TradeEvent:FireServer("Inventory", item) end) task.wait() end end end})
+
+Tab:Select()
